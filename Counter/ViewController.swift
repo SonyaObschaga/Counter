@@ -7,59 +7,56 @@
 
 import UIKit
 
-class ViewController: UIViewController {
-    var a: Int = 0
-    
-    @IBOutlet weak var buttonPlus: UIButton!
-    
-    @IBOutlet weak var buttonMinus: UIButton!
-    
-    @IBOutlet weak var buttonReset: UIButton!
-    
-    @IBOutlet weak var counterValue: UILabel!
-        
-    @IBOutlet weak var labelInfo: UITextView!
+final class ViewController: UIViewController {
+    @IBOutlet private weak var buttonPlus: UIButton!
+    @IBOutlet private weak var buttonMinus: UIButton!
+    @IBOutlet private weak var buttonReset: UIButton!
+    @IBOutlet private weak var labelValue: UILabel!
+    @IBOutlet private weak var labelInfo: UITextView!
+    private var counterValue: Int = 0
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        labelInfo.text = "История изменений:"
-        labelInfo.isEditable = false
-        labelInfo.isScrollEnabled = true
+        setupUI()
     }
-    
-    @IBAction func buttonPlusDidTap(_ sender: Any) {
-        a += 1
-        counterValue.text = "Значение счетчика: \(a)"
+    @IBAction private func buttonPlusDidTap(_ sender: Any) {
+        counterValue += 1
+        labelValue.text = "Значение счетчика: \(counterValue)"
         labelInfo.text += "\n[\(getCurrentTime())]: значение изменено на +1"
         scrollToBottom()
     }
-    
-    @IBAction func buttonMinusDidTap(_ sender: Any) {
-        if a > 0 {
-            a -= 1
-            counterValue.text = "Значение счетчика: \(a)"
+    @IBAction private func buttonMinusDidTap(_ sender: Any) {
+        if counterValue > 0 {
+            counterValue -= 1
+            labelValue.text = "Значение счетчика: \(counterValue)"
             labelInfo.text += "\n[\(getCurrentTime())]: значение изменено на -1"
         } else {
             labelInfo.text += "\n[\(getCurrentTime())]: попытка уменьшить значение счётчика ниже 0"
         }
         scrollToBottom()
     }
-    
-    @IBAction func buttonResetDidTap(_ sender: Any) {
-       a = 0
-        counterValue.text = "\(a)"
+    @IBAction private func buttonResetDidTap(_ sender: Any) {
+        counterValue = 0
+        labelValue.text = "\(counterValue)"
         labelInfo.text += "\n[\(getCurrentTime())]: значение сброшено"
         scrollToBottom()
     }
-    
-    func getCurrentTime() -> String {
+    private let dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.dateFormat = "dd.MM.yyyy HH:mm:ss"
-        return formatter.string(from: Date())
+        return formatter
+    }()
+    private func getCurrentTime() -> String {
+        return dateFormatter.string(from: Date())
     }
-    
-    func scrollToBottom() {
+   private func scrollToBottom() {
         let range = NSRange(location: labelInfo.text.count - 1, length: 1)
         labelInfo.scrollRangeToVisible(range)
     }
+    private func setupUI() {
+        labelInfo.text = "История изменений:"
+        labelInfo.isEditable = false
+        labelInfo.isScrollEnabled = true
+        }
 }
+
